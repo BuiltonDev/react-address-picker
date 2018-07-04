@@ -1,0 +1,26 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "browsers": [ "safari 10", "ie 11", "ios 9" ]
+        },
+        "modules": false,
+        "useBuiltIns": "usage",
+        "loose": true
+      }
+    ],
+    ["@babel/preset-react"]
+  ],
+  "plugins": ["@babel/plugin-proposal-object-rest-spread", "react-css-modules"],
+  "comments": false,
+  "env": {
+    "test": {
+      "presets": [
+        ["@babel/preset-env"],
+        ["@babel/preset-react"]
+      ]
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@kvass.ai/react-address-picker",
+  "version": "1.0.0",
+  "description": "Address Component",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/babel src --out-dir dist",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "start-storybook -p 9001 -c .storybook"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kvassAI/react-address-picker/issues"
+  },
+  "homepage": "https://github.com/kvassAI/react-address-picker#readme",
+  "devDependencies": {
+    "@babel/cli": "7.0.0-beta.51",
+    "@babel/core": "7.0.0-beta.51",
+    "@babel/plugin-proposal-object-rest-spread": "7.0.0-beta.51",
+    "@babel/preset-env": "7.0.0-beta.51",
+    "@babel/preset-react": "7.0.0-beta.51",
+    "@storybook/addon-console": "^1.0.4",
+    "@storybook/react": "^3.4.8",
+    "babel-plugin-react-css-modules": "^3.4.2"
+  },
+  "dependencies": {
+    "@babel/core": "7.0.0-beta.51",
+    "babel-core": "^7.0.0-bridge.0",
+    "prop-types": "15.6.1",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-google-autocomplete": "1.0.16",
+    "react-google-maps": "9.4.5"
+  }
+}
