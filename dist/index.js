@@ -18,7 +18,7 @@ import Autocomplete from 'react-google-autocomplete';
 import PropTypes from 'prop-types';
 import Map from './Map';
 import debounce from './../utils/debounce';
-import styles from './Styles';
+import styles from './styles';
 
 var Index = function (_Component) {
   _inheritsLoose(Index, _Component);
@@ -124,23 +124,13 @@ var Index = function (_Component) {
       key: formType.name,
       style: styles.inputContainer
     }, React.createElement("div", {
-      style: {
-        flex: 0.6,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center'
-      }
+      style: styles.formLabel
     }, React.createElement("label", {
       style: styles.inputLabel
     }, formType.name, formType.required && '*', ": ")), React.createElement("div", {
-      style: {
-        flex: 1,
-        flexDirection: 'row',
-        display: 'flex',
-        justifyContent: 'flex-end'
-      }
+      style: styles.formInput
     }, !formType.autocomplete ? React.createElement("input", {
-      style: styles.input,
+      style: _objectSpread({}, styles.input),
       type: "input",
       name: formType.name,
       placeholder: formType.name,
@@ -173,13 +163,7 @@ var Index = function (_Component) {
         lng = _this$state.lng,
         lat = _this$state.lat;
     return React.createElement("div", {
-      style: {
-        border: '2px solid orange',
-        borderRadius: '15px',
-        padding: '10px',
-        background: 'repeating-linear-gradient(-45deg, #fcfdff, #fcfdff 5px, white 5px, white 10px)',
-        minWidth: '320px'
-      }
+      style: styles.container
     }, React.createElement("div", {
       style: {
         marginBottom: '24px'
@@ -202,7 +186,7 @@ var Index = function (_Component) {
         marginTop: '24px'
       }
     }, React.createElement("button", {
-      style: styles.okButtonStyle,
+      style: styles.okButton,
       type: "button",
       onClick: function onClick() {
         return _this3.handleCallback();
@@ -232,15 +216,13 @@ Index.defaultProps = {
     name: 'Street number',
     google_label: 'street_number',
     google_type: 'short_name',
-    required: true,
-    inputSize: '50%'
+    required: true
   }, {
     id: 'postal_code',
     name: 'Postcode',
     google_label: 'postcode',
     google_type: 'short_name',
-    required: true,
-    inputSize: '50%'
+    required: true
   }, {
     id: 'postal_town',
     name: 'City',

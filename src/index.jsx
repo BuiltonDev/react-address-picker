@@ -3,7 +3,7 @@ import Autocomplete from 'react-google-autocomplete';
 import PropTypes from 'prop-types';
 import Map from './Map';
 import debounce from './../utils/debounce';
-import styles from './Styles'
+import styles from './styles'
 
 class Index extends Component {
   constructor(props) {
@@ -87,13 +87,13 @@ class Index extends Component {
   renderInput(formType) {
     return (
       <div key={formType.name} style={styles.inputContainer}>
-        <div style={{flex: 0.6, display: 'flex', flexDirection: 'column', justifyContent: 'center',}}>
+        <div style={styles.formLabel}>
           <label style={styles.inputLabel}>{formType.name}{formType.required && '*'}: </label>
         </div>
-        <div style={{flex: 1, flexDirection: 'row', display: 'flex', justifyContent: 'flex-end'}}>
+        <div style={styles.formInput}>
           {!formType.autocomplete ? (
             <input
-              style={styles.input}
+              style={{...styles.input}}
               type="input"
               name={formType.name}
               placeholder={formType.name}
@@ -123,13 +123,7 @@ class Index extends Component {
   render() {
     const {lng, lat} = this.state;
     return (
-      <div style={{
-        border: '2px solid orange',
-        borderRadius: '15px',
-        padding: '10px',
-        background: 'repeating-linear-gradient(-45deg, #fcfdff, #fcfdff 5px, white 5px, white 10px)',
-        minWidth: '320px',
-      }}>
+      <div style={styles.container}>
         <div style={{marginBottom: '24px'}}>
           {this.props.fields.map(field => this.renderInput(field))}
         </div>
@@ -145,7 +139,7 @@ class Index extends Component {
         />
         <div style={{marginTop: '24px'}}>
           <button
-            style={styles.okButtonStyle}
+            style={styles.okButton}
             type="button"
             onClick={() => this.handleCallback()}
           >
@@ -178,15 +172,13 @@ Index.defaultProps = {
       name: 'Street number',
       google_label: 'street_number',
       google_type: 'short_name',
-      required: true,
-      inputSize: '50%'
+      required: true
     }, {
       id: 'postal_code',
       name: 'Postcode',
       google_label: 'postcode',
       google_type: 'short_name',
-      required: true,
-      inputSize: '50%'
+      required: true
     }, {
       id: 'postal_town',
       name: 'City',

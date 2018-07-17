@@ -34,15 +34,13 @@ storiesOf('Map', module)
             name: 'Street number',
             google_label: 'street_number',
             google_type: 'short_name',
-            required: true,
-            inputSize: '50%'
+            required: true
           }, {
             id: 'postal_code',
             name: 'Postcode',
             google_label: 'postcode',
             google_type: 'short_name',
-            required: true,
-            inputSize: '50%'
+            required: true
           }, {
             id: 'postal_town',
             name: 'City',
