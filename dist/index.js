@@ -18,6 +18,7 @@ import Autocomplete from 'react-google-autocomplete';
 import PropTypes from 'prop-types';
 import Map from './Map';
 import debounce from './../utils/debounce';
+import styles from './Styles';
 
 var Index = function (_Component) {
   _inheritsLoose(Index, _Component);
@@ -121,21 +122,25 @@ var Index = function (_Component) {
 
     return React.createElement("div", {
       key: formType.name,
-      style: {
-        display: 'flex'
-      }
+      style: styles.inputContainer
     }, React.createElement("div", {
       style: {
-        flex: 0.6
+        flex: 0.6,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center'
       }
-    }, React.createElement("label", null, formType.name, formType.required && '*', ": ")), React.createElement("div", {
+    }, React.createElement("label", {
+      style: styles.inputLabel
+    }, formType.name, formType.required && '*', ": ")), React.createElement("div", {
       style: {
-        flex: 1
+        flex: 1,
+        flexDirection: 'row',
+        display: 'flex',
+        justifyContent: 'flex-end'
       }
     }, !formType.autocomplete ? React.createElement("input", {
-      style: formType.inputSize && {
-        width: formType.inputSize
-      },
+      style: styles.input,
       type: "input",
       name: formType.name,
       placeholder: formType.name,
@@ -144,6 +149,7 @@ var Index = function (_Component) {
         return _this2.onChange(formType.id, e.target.value);
       }
     }) : React.createElement(Autocomplete, {
+      style: styles.input,
       onPlaceSelected: function onPlaceSelected(place) {
         _this2.setState({
           lng: place.geometry.location.lng(),
@@ -171,9 +177,14 @@ var Index = function (_Component) {
         border: '2px solid orange',
         borderRadius: '15px',
         padding: '10px',
-        background: 'repeating-linear-gradient(-45deg, #fcfdff, #fcfdff 5px, white 5px, white 10px)'
+        background: 'repeating-linear-gradient(-45deg, #fcfdff, #fcfdff 5px, white 5px, white 10px)',
+        minWidth: '320px'
       }
-    }, React.createElement("div", null, this.props.fields.map(function (field) {
+    }, React.createElement("div", {
+      style: {
+        marginBottom: '24px'
+      }
+    }, this.props.fields.map(function (field) {
       return _this3.renderInput(field);
     })), React.createElement(Map, {
       position: {
@@ -186,17 +197,23 @@ var Index = function (_Component) {
           location: position
         }, _this3);
       }
-    }), React.createElement("div", null, React.createElement("button", {
-      type: "button",
-      onClick: function onClick() {
-        return _this3.clearForm();
+    }), React.createElement("div", {
+      style: {
+        marginTop: '24px'
       }
-    }, this.props.text.clearButton), React.createElement("button", {
+    }, React.createElement("button", {
+      style: styles.okButtonStyle,
       type: "button",
       onClick: function onClick() {
         return _this3.handleCallback();
       }
-    }, this.props.text.okButton)));
+    }, this.props.text.okButton), React.createElement("button", {
+      style: styles.clearButton,
+      type: "button",
+      onClick: function onClick() {
+        return _this3.clearForm();
+      }
+    }, this.props.text.clearButton)));
   };
 
   return Index;
