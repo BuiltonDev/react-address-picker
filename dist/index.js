@@ -18,6 +18,7 @@ import Autocomplete from 'react-google-autocomplete';
 import PropTypes from 'prop-types';
 import Map from './Map';
 import debounce from './../utils/debounce';
+import styles from './styles';
 
 var Index = function (_Component) {
   _inheritsLoose(Index, _Component);
@@ -121,21 +122,15 @@ var Index = function (_Component) {
 
     return React.createElement("div", {
       key: formType.name,
-      style: {
-        display: 'flex'
-      }
+      style: styles.inputContainer
     }, React.createElement("div", {
-      style: {
-        flex: 0.6
-      }
-    }, React.createElement("label", null, formType.name, formType.required && '*', ": ")), React.createElement("div", {
-      style: {
-        flex: 1
-      }
+      style: styles.formLabel
+    }, React.createElement("label", {
+      style: styles.inputLabel
+    }, formType.name, formType.required && '*', ": ")), React.createElement("div", {
+      style: styles.formInput
     }, !formType.autocomplete ? React.createElement("input", {
-      style: formType.inputSize && {
-        width: formType.inputSize
-      },
+      style: _objectSpread({}, styles.input),
       type: "input",
       name: formType.name,
       placeholder: formType.name,
@@ -144,6 +139,7 @@ var Index = function (_Component) {
         return _this2.onChange(formType.id, e.target.value);
       }
     }) : React.createElement(Autocomplete, {
+      style: styles.input,
       onPlaceSelected: function onPlaceSelected(place) {
         _this2.setState({
           lng: place.geometry.location.lng(),
@@ -167,13 +163,12 @@ var Index = function (_Component) {
         lng = _this$state.lng,
         lat = _this$state.lat;
     return React.createElement("div", {
+      style: styles.container
+    }, React.createElement("div", {
       style: {
-        border: '2px solid orange',
-        borderRadius: '15px',
-        padding: '10px',
-        background: 'repeating-linear-gradient(-45deg, #fcfdff, #fcfdff 5px, white 5px, white 10px)'
+        marginBottom: '24px'
       }
-    }, React.createElement("div", null, this.props.fields.map(function (field) {
+    }, this.props.fields.map(function (field) {
       return _this3.renderInput(field);
     })), React.createElement(Map, {
       position: {
@@ -186,17 +181,23 @@ var Index = function (_Component) {
           location: position
         }, _this3);
       }
-    }), React.createElement("div", null, React.createElement("button", {
-      type: "button",
-      onClick: function onClick() {
-        return _this3.clearForm();
+    }), React.createElement("div", {
+      style: {
+        marginTop: '24px'
       }
-    }, this.props.text.clearButton), React.createElement("button", {
+    }, React.createElement("button", {
+      style: styles.okButton,
       type: "button",
       onClick: function onClick() {
         return _this3.handleCallback();
       }
-    }, this.props.text.okButton)));
+    }, this.props.text.okButton), React.createElement("button", {
+      style: styles.clearButton,
+      type: "button",
+      onClick: function onClick() {
+        return _this3.clearForm();
+      }
+    }, this.props.text.clearButton)));
   };
 
   return Index;
@@ -215,15 +216,13 @@ Index.defaultProps = {
     name: 'Street number',
     google_label: 'street_number',
     google_type: 'short_name',
-    required: true,
-    inputSize: '50%'
+    required: true
   }, {
     id: 'postal_code',
     name: 'Postcode',
     google_label: 'postcode',
     google_type: 'short_name',
-    required: true,
-    inputSize: '50%'
+    required: true
   }, {
     id: 'postal_town',
     name: 'City',
