@@ -18,6 +18,7 @@ import Autocomplete from 'react-google-autocomplete';
 import PropTypes from 'prop-types';
 import Map from './Map';
 import debounce from './../utils/debounce';
+import styles from './styles';
 
 var Index = function (_Component) {
   _inheritsLoose(Index, _Component);
@@ -43,37 +44,33 @@ var Index = function (_Component) {
   var _proto = Index.prototype;
 
   _proto.fillInAddress = function fillInAddress(place) {
+    var _this2 = this;
+
     var stateCopy = Object.assign({}, this.state);
     this.props.fields.forEach(function (field) {
       stateCopy[field.id] = '';
     });
-    var fields = [];
-    this.props.fields.forEach(function (field) {
-      fields[field.id] = field;
-    });
 
     var _loop = function _loop(i) {
       var addressType = place.address_components[i].types[0];
+      Object.entries(_this2.props.fields).forEach(function (_ref) {
+        var key = _ref[0],
+            value = _ref[1];
+        var googleTypes = value.googleType;
 
-      if (fields[addressType]) {
-        stateCopy[addressType] = place.address_components[i][fields[addressType].google_type];
-      } else {
-        Object.entries(fields).forEach(function (_ref) {
-          var key = _ref[0],
-              value = _ref[1];
+        if (!Array.isArray(googleTypes) && googleTypes) {
+          googleTypes = [value.googleType];
+        }
 
-          if (value.fallbacks && stateCopy[key] === '') {
-            for (var j = 0; j < value.fallbacks.length; j += 1) {
-              var fallback = value.fallbacks[j];
-
-              if (fallback === addressType) {
-                stateCopy[key] = place.address_components[i][fields[key].google_type];
-                break;
-              }
+        if (googleTypes && stateCopy[value.id] === '') {
+          for (var j = 0; j < googleTypes.length; j += 1) {
+            if (googleTypes[j] === addressType) {
+              stateCopy[value.id] = place.address_components[i][value.googleLongName ? 'long_name' : 'short_name'];
+              break;
             }
           }
-        });
-      }
+        }
+      });
     };
 
     for (var i = 0; i < place.address_components.length; i += 1) {
@@ -117,64 +114,60 @@ var Index = function (_Component) {
   };
 
   _proto.renderInput = function renderInput(formType) {
-    var _this2 = this;
+    var _this3 = this;
 
     return React.createElement("div", {
       key: formType.name,
-      style: {
-        display: 'flex'
-      }
+      style: styles.inputContainer
     }, React.createElement("div", {
-      style: {
-        flex: 0.6
-      }
-    }, React.createElement("label", null, formType.name, formType.required && '*', ": ")), React.createElement("div", {
-      style: {
-        flex: 1
-      }
+      style: styles.formLabel
+    }, React.createElement("label", {
+      style: styles.inputLabel
+    }, formType.name, ": "), !formType.required && React.createElement("span", {
+      style: styles.optional
+    }, "(", this.props.text.optional, ")")), React.createElement("div", {
+      style: styles.formInput
     }, !formType.autocomplete ? React.createElement("input", {
-      style: formType.inputSize && {
-        width: formType.inputSize
-      },
+      style: _objectSpread({}, styles.input),
       type: "input",
       name: formType.name,
       placeholder: formType.name,
       value: this.state[formType.id],
       onChange: function onChange(e) {
-        return _this2.onChange(formType.id, e.target.value);
+        return _this3.onChange(formType.id, e.target.value);
       }
     }) : React.createElement(Autocomplete, {
+      style: styles.input,
       onPlaceSelected: function onPlaceSelected(place) {
-        _this2.setState({
+        _this3.setState({
           lng: place.geometry.location.lng(),
           lat: place.geometry.location.lat()
         });
 
-        _this2.fillInAddress(place);
+        _this3.fillInAddress(place);
       },
-      value: this.state.route,
+      value: this.state.street_name,
       onChange: function onChange(e) {
-        return _this2.onChange(formType.name, e.target.value);
+        return _this3.onChange(formType.name, e.target.value);
       },
       types: ['address']
     })));
   };
 
   _proto.render = function render() {
-    var _this3 = this;
+    var _this4 = this;
 
     var _this$state = this.state,
         lng = _this$state.lng,
         lat = _this$state.lat;
     return React.createElement("div", {
+      style: styles.container
+    }, React.createElement("div", {
       style: {
-        border: '2px solid orange',
-        borderRadius: '15px',
-        padding: '10px',
-        background: 'repeating-linear-gradient(-45deg, #fcfdff, #fcfdff 5px, white 5px, white 10px)'
+        marginBottom: '24px'
       }
-    }, React.createElement("div", null, this.props.fields.map(function (field) {
-      return _this3.renderInput(field);
+    }, this.props.fields.map(function (field) {
+      return _this4.renderInput(field);
     })), React.createElement(Map, {
       position: {
         lng: lng,
@@ -182,21 +175,28 @@ var Index = function (_Component) {
         zoom: 8
       },
       onChange: function onChange(position) {
-        return !_this3.state.hasFormBeenEdited && _this3.geocode({
+        return !_this4.state.hasFormBeenEdited && _this4.geocode({
           location: position
-        }, _this3);
+        }, _this4);
+      },
+      geolocation: this.props.geolocation
+    }), React.createElement("div", {
+      style: {
+        marginTop: '24px'
       }
-    }), React.createElement("div", null, React.createElement("button", {
+    }, React.createElement("button", {
+      style: styles.okButton,
       type: "button",
       onClick: function onClick() {
-        return _this3.clearForm();
+        return _this4.handleCallback();
       }
-    }, this.props.text.clearButton), React.createElement("button", {
+    }, this.props.text.okButton), React.createElement("button", {
+      style: styles.clearButton,
       type: "button",
       onClick: function onClick() {
-        return _this3.handleCallback();
+        return _this4.clearForm();
       }
-    }, this.props.text.okButton)));
+    }, this.props.text.clearButton)));
   };
 
   return Index;
@@ -204,44 +204,43 @@ var Index = function (_Component) {
 
 Index.defaultProps = {
   fields: [{
-    id: 'route',
+    id: 'street_name',
     name: 'Street name',
-    google_label: 'street_name',
-    google_type: 'long_name',
+    googleType: 'route',
+    googleLongName: true,
     required: true,
     autocomplete: true
   }, {
-    id: 'street_number',
+    id: 'building',
     name: 'Street number',
-    google_label: 'street_number',
-    google_type: 'short_name',
-    required: true,
-    inputSize: '50%'
+    googleType: 'street_number',
+    googleLongName: false,
+    required: true
   }, {
-    id: 'postal_code',
+    id: 'postcode',
     name: 'Postcode',
-    google_label: 'postcode',
-    google_type: 'short_name',
-    required: true,
-    inputSize: '50%'
+    googleType: 'postal_code',
+    googleLongName: false,
+    required: true
   }, {
-    id: 'postal_town',
+    id: 'city',
     name: 'City',
-    google_label: 'city',
-    google_type: 'long_name',
-    fallbacks: ['locality'],
+    googleType: ['postal_town', 'locality'],
+    googleLongName: true,
     required: true
   }, {
     id: 'country',
     name: 'Country',
-    google_label: 'country',
-    google_type: 'long_name',
+    googleType: 'country',
+    googleLongName: true,
     required: true
   }],
   text: {
     clearButton: 'Clear',
-    okButton: 'Ok'
-  }
+    okButton: 'Ok',
+    optional: 'Optional'
+  },
+  geolocation: true
 };
 Index.propTypes = {
   position: PropTypes.shape({
@@ -250,16 +249,17 @@ Index.propTypes = {
   }).isRequired,
   text: PropTypes.shape({
     clearButton: PropTypes.string.isRequired,
-    okButton: PropTypes.string.isRequired
+    okButton: PropTypes.string.isRequired,
+    optional: PropTypes.string.isRequired
   }),
   fields: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string,
-    required: PropTypes.bool.isRequired,
-    google_label: PropTypes.string,
-    google_type: PropTypes.string,
-    fallbacks: PropTypes.arrayOf(PropTypes.string)
+    required: PropTypes.bool,
+    googleType: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+    googleLongName: PropTypes.bool
   })),
+  geolocation: PropTypes.bool,
   callback: PropTypes.func
 };
 export default Index;
