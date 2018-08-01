@@ -12,7 +12,7 @@ class Map extends Component {
   }
 
   componentDidMount() {
-    if (navigator.geolocation) {
+    if (navigator.geolocation && this.props.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const {latitude, longitude} = position.coords;
         this.panTo({lat: latitude, lng: longitude});
@@ -83,7 +83,8 @@ Map.propTypes = {
     lng: PropTypes.number.isRequired,
     lat: PropTypes.number.isRequired
   }).isRequired,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  geolocation: PropTypes.bool
 };
 
 export default Map;

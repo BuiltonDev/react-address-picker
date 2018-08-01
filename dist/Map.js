@@ -22,7 +22,7 @@ var Map = function (_Component) {
   _proto.componentDidMount = function componentDidMount() {
     var _this2 = this;
 
-    if (navigator.geolocation) {
+    if (navigator.geolocation && this.props.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
         var _position$coords = position.coords,
             latitude = _position$coords.latitude,
@@ -121,6 +121,7 @@ Map.propTypes = {
     lng: PropTypes.number.isRequired,
     lat: PropTypes.number.isRequired
   }).isRequired,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  geolocation: PropTypes.bool
 };
 export default Map;

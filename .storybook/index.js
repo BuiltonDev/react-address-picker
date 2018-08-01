@@ -1,11 +1,11 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import App from '../dist';
+import AddressReact from '../dist';
 
 storiesOf('Map', module)
   .add('Default', () => (
     <div style={{width: "300px", height: "200px", margin: "auto"}}>
-      <App
+      <AddressReact
         position={{
           lat: 59.9165512,
           lng: 10.7365638,
@@ -14,39 +14,56 @@ storiesOf('Map', module)
       />
     </div>
   ))
+  .add('Without geolocation', () => (
+    <div style={{width: "300px", height: "200px", margin: "auto"}}>
+      <AddressReact
+        position={{
+          lat: 59.9165512,
+          lng: 10.7365638,
+        }}
+        geolocation={false}
+        callback={console.log}
+      />
+    </div>
+  ))
   .add('With custom form', () => (
     <div style={{width: "300px", height: "200px", margin: "auto"}}>
-      <App
+      <AddressReact
         position={{
           lat: 59.9165512,
           lng: 10.7365638,
         }}
         fields={[
           {
-            id: 'route',
+            id: 'street_name',
             name: 'Street name',
-            google_label: 'street_name',
-            google_type: 'long_name',
+            googleType: 'route',
+            googleLongName: true,
             required: true,
             autocomplete: true
           }, {
-            id: 'street_number',
+            id: 'building',
             name: 'Street number',
-            google_label: 'street_number',
-            google_type: 'short_name',
+            googleType: 'street_number',
+            googleLongName: false,
             required: true
           }, {
-            id: 'postal_code',
+            id: 'postcode',
             name: 'Postcode',
-            google_label: 'postcode',
-            google_type: 'short_name',
+            googleType: 'postal_code',
+            googleLongName: false,
             required: true
           }, {
-            id: 'postal_town',
+            id: 'city',
             name: 'City',
-            google_label: 'city',
-            google_type: 'long_name',
-            fallbacks: ['locality'],
+            googleType: ['postal_town', 'locality'],
+            googleLongName: true,
+            required: true
+          }, {
+            id: 'country',
+            name: 'Country',
+            googleType: 'country',
+            googleLongName: true,
             required: true
           }, {
             id: 'organisation',

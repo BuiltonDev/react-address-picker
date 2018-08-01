@@ -54,6 +54,10 @@ const styles = {
     borderRadius: '8px',
     border: '1px solid #f68d39',
     marginLeft: '16px',
+  },
+  optional: {
+    color: 'grey',
+    fontSize: '10px',
   }
 };
 

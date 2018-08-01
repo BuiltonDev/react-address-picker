@@ -24,28 +24,23 @@ class Index extends Component {
     this.props.fields.forEach((field) => {
       stateCopy[field.id] = '';
     });
-    const fields = [];
-    this.props.fields.forEach((field) => {
-      fields[field.id] = field;
-    });
 
     for (let i = 0; i < place.address_components.length; i += 1) {
       const addressType = place.address_components[i].types[0];
-      if (fields[addressType]) {
-        stateCopy[addressType] = place.address_components[i][fields[addressType].google_type];
-      } else {
-        Object.entries(fields).forEach(([key, value]) => {
-          if (value.fallbacks && stateCopy[key] === '') {
-            for (let j = 0; j < value.fallbacks.length; j += 1) {
-              const fallback = value.fallbacks[j];
-              if (fallback === addressType) {
-                stateCopy[key] = place.address_components[i][fields[key].google_type];
-                break;
-              }
+      Object.entries(this.props.fields).forEach(([key, value]) => {
+        let googleTypes = value.googleType;
+        if (!Array.isArray(googleTypes) && googleTypes) {
+          googleTypes = [value.googleType];
+        }
+        if (googleTypes && stateCopy[value.id] === '') {
+          for (let j = 0; j < googleTypes.length; j += 1) {
+            if (googleTypes[j] === addressType) {
+              stateCopy[value.id] = place.address_components[i][value.googleLongName ? 'long_name' : 'short_name'];
+              break;
             }
           }
-        });
-      }
+        }
+      });
     }
     this.setState(stateCopy);
   }
@@ -88,7 +83,10 @@ class Index extends Component {
     return (
       <div key={formType.name} style={styles.inputContainer}>
         <div style={styles.formLabel}>
-          <label style={styles.inputLabel}>{formType.name}{formType.required && '*'}: </label>
+          <label style={styles.inputLabel}>{formType.name}: </label>
+          {!formType.required && (
+            <span style={styles.optional}>({this.props.text.optional})</span>
+          )}
         </div>
         <div style={styles.formInput}>
           {!formType.autocomplete ? (
@@ -110,7 +108,7 @@ class Index extends Component {
                 });
                 this.fillInAddress(place);
               }}
-              value={this.state.route}
+              value={this.state.street_name}
               onChange={e => this.onChange(formType.name, e.target.value)}
               types={['address']}
             />
@@ -136,6 +134,7 @@ class Index extends Component {
           onChange={ position =>
             !this.state.hasFormBeenEdited && this.geocode({location: position}, this)
           }
+          geolocation={this.props.geolocation}
         />
         <div style={{marginTop: '24px'}}>
           <button
@@ -161,43 +160,44 @@ class Index extends Component {
 Index.defaultProps = {
   fields: [
     {
-      id: 'route',
+      id: 'street_name',
       name: 'Street name',
-      google_label: 'street_name',
-      google_type: 'long_name',
+      googleType: 'route',
+      googleLongName: true,
       required: true,
       autocomplete: true
     }, {
-      id: 'street_number',
+      id: 'building',
       name: 'Street number',
-      google_label: 'street_number',
-      google_type: 'short_name',
+      googleType: 'street_number',
+      googleLongName: false,
       required: true
     }, {
-      id: 'postal_code',
+      id: 'postcode',
       name: 'Postcode',
-      google_label: 'postcode',
-      google_type: 'short_name',
+      googleType: 'postal_code',
+      googleLongName: false,
       required: true
     }, {
-      id: 'postal_town',
+      id: 'city',
       name: 'City',
-      google_label: 'city',
-      google_type: 'long_name',
-      fallbacks: ['locality'],
+      googleType: ['postal_town', 'locality'],
+      googleLongName: true,
       required: true
     }, {
       id: 'country',
       name: 'Country',
-      google_label: 'country',
-      google_type: 'long_name',
+      googleType: 'country',
+      googleLongName: true,
       required: true
     }
   ],
   text: {
     clearButton: 'Clear',
-    okButton: 'Ok'
-  }
+    okButton: 'Ok',
+    optional: 'Optional'
+  },
+  geolocation: true,
 };
 
 Index.propTypes = {
@@ -207,16 +207,17 @@ Index.propTypes = {
   }).isRequired,
   text: PropTypes.shape({
     clearButton: PropTypes.string.isRequired,
-    okButton: PropTypes.string.isRequired
+    okButton: PropTypes.string.isRequired,
+    optional: PropTypes.string.isRequired
   }),
   fields: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string,
-    required: PropTypes.bool.isRequired,
-    google_label: PropTypes.string,
-    google_type: PropTypes.string,
-    fallbacks: PropTypes.arrayOf(PropTypes.string)
+    required: PropTypes.bool,
+    googleType: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+    googleLongName: PropTypes.bool,
   })),
+  geolocation: PropTypes.bool,
   callback: PropTypes.func
 };
 
