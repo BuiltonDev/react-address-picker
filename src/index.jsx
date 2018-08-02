@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import Autocomplete from 'react-google-autocomplete';
 import PropTypes from 'prop-types';
+import withCancellableFetchPromise from 'auto-cancel-fetch-promises';
 import Map from './Map';
 import debounce from './../utils/debounce';
-import styles from './styles'
+import styles from './styles';
 
 class Index extends Component {
   constructor(props) {
@@ -54,13 +55,17 @@ class Index extends Component {
 
   geocode(search, context) { // eslint-disable-line class-methods-use-this
     const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode(search, (results, status) => {
-      if (status === 'OK') {
-        if (!context.state.hasFormBeenEdited) { // Can happen before the query resolves.
-          context.fillInAddress(results[0]);
+    const geocoderPromise = new Promise((resolve, reject) => {
+      geocoder.geocode(search, (results, status) => {
+        if (status === 'OK') {
+          if (!context.state.hasFormBeenEdited) { // Can happen before the query resolves.
+            resolve(results[0]);
+          }
         }
-      }
+        reject();
+      });
     });
+    this.props.promiseWrapper(geocoderPromise).then(context.fillInAddress);
   }
 
   clearForm() {
@@ -221,4 +226,4 @@ Index.propTypes = {
   callback: PropTypes.func
 };
 
-export default Index;
+export default withCancellableFetchPromise(Index);

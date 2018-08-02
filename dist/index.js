@@ -1,5 +1,6 @@
 import "core-js/modules/es6.object.keys";
 import "core-js/modules/es6.function.name";
+import "core-js/modules/es6.promise";
 import "core-js/modules/es6.array.iterator";
 import "core-js/modules/es7.object.entries";
 import "core-js/modules/es6.object.assign";
@@ -16,6 +17,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 import React, { Component } from 'react';
 import Autocomplete from 'react-google-autocomplete';
 import PropTypes from 'prop-types';
+import withCancellableFetchPromise from 'auto-cancel-fetch-promises';
 import Map from './Map';
 import debounce from './../utils/debounce';
 import styles from './styles';
@@ -88,13 +90,18 @@ var Index = function (_Component) {
 
   _proto.geocode = function geocode(search, context) {
     var geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode(search, function (results, status) {
-      if (status === 'OK') {
-        if (!context.state.hasFormBeenEdited) {
-          context.fillInAddress(results[0]);
+    var geocoderPromise = new Promise(function (resolve, reject) {
+      geocoder.geocode(search, function (results, status) {
+        if (status === 'OK') {
+          if (!context.state.hasFormBeenEdited) {
+            resolve(results[0]);
+          }
         }
-      }
+
+        reject();
+      });
     });
+    this.props.promiseWrapper(geocoderPromise).then(context.fillInAddress);
   };
 
   _proto.clearForm = function clearForm() {
@@ -262,4 +269,4 @@ Index.propTypes = {
   geolocation: PropTypes.bool,
   callback: PropTypes.func
 };
-export default Index;
+export default withCancellableFetchPromise(Index);

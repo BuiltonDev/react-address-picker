@@ -1,5 +1,6 @@
 {
   "presets": [
+    ["@babel/preset-react"],
     [
       "@babel/preset-env",
       {
@@ -10,8 +11,7 @@
         "useBuiltIns": "usage",
         "loose": true
       }
-    ],
-    ["@babel/preset-react"]
+    ]
   ],
   "plugins": ["@babel/plugin-proposal-object-rest-spread", "react-css-modules"],
   "comments": false,
