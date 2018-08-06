@@ -17,7 +17,6 @@ class Index extends Component {
     this.props.fields.forEach((field) => {
       this.state[field.id] = ''; // eslint-disable-line react/no-direct-mutation-state
     }, this);
-    this.geocode = debounce(this.geocode, 1500);
   }
 
   fillInAddress(place) {
@@ -54,6 +53,7 @@ class Index extends Component {
   }
 
   geocode(search, context) { // eslint-disable-line class-methods-use-this
+    this.geocode = debounce(this.geocode, 1500);
     const geocoder = new window.google.maps.Geocoder();
     const geocoderPromise = new Promise((resolve, reject) => {
       geocoder.geocode(search, (results, status) => {
@@ -65,7 +65,7 @@ class Index extends Component {
         reject();
       });
     });
-    this.props.promiseWrapper(geocoderPromise).then(context.fillInAddress);
+    context.props.promiseWrapper(geocoderPromise).then((address) => console.log(address) || context.fillInAddress(address));
   }
 
   clearForm() {

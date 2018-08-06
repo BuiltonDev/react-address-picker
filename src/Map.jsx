@@ -14,10 +14,12 @@ class Map extends Component {
   componentDidMount() {
     if (navigator.geolocation && this.props.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
-        const {latitude, longitude} = position.coords;
-        this.panTo({lat: latitude, lng: longitude});
-        const currentMap = this.map.current.state.map;
-        currentMap.setZoom(18);
+        if (this.map.current) {
+          const {latitude, longitude} = position.coords;
+          this.panTo({lat: latitude, lng: longitude});
+          const currentMap = this.map.current.state.map;
+          currentMap.setZoom(18);
+        }
       });
     }
   }

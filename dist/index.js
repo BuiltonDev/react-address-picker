@@ -39,7 +39,6 @@ var Index = function (_Component) {
       _this.state[field.id] = '';
     }, _assertThisInitialized(_assertThisInitialized(_this)));
 
-    _this.geocode = debounce(_this.geocode, 1500);
     return _this;
   }
 
@@ -89,6 +88,7 @@ var Index = function (_Component) {
   };
 
   _proto.geocode = function geocode(search, context) {
+    this.geocode = debounce(this.geocode, 1500);
     var geocoder = new window.google.maps.Geocoder();
     var geocoderPromise = new Promise(function (resolve, reject) {
       geocoder.geocode(search, function (results, status) {
@@ -101,7 +101,9 @@ var Index = function (_Component) {
         reject();
       });
     });
-    this.props.promiseWrapper(geocoderPromise).then(context.fillInAddress);
+    context.props.promiseWrapper(geocoderPromise).then(function (address) {
+      return console.log(address) || context.fillInAddress(address);
+    });
   };
 
   _proto.clearForm = function clearForm() {

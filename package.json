@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@babel/core": "7.0.0-beta.51",
-    "auto-cancel-fetch-promises": "git+https://github.com/kvassAI/auto-cancel-fetch-promise.git",
+    "auto-cancel-fetch-promises": "git://github.com/kvassAI/auto-cancel-fetch-promise.git#compiled-library-w-example",
     "babel-core": "^7.0.0-bridge.0",
     "prop-types": "15.6.1",
     "react": "^16.4.1",

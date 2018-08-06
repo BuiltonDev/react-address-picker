@@ -24,17 +24,19 @@ var Map = function (_Component) {
 
     if (navigator.geolocation && this.props.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
-        var _position$coords = position.coords,
-            latitude = _position$coords.latitude,
-            longitude = _position$coords.longitude;
+        if (_this2.map.current) {
+          var _position$coords = position.coords,
+              latitude = _position$coords.latitude,
+              longitude = _position$coords.longitude;
 
-        _this2.panTo({
-          lat: latitude,
-          lng: longitude
-        });
+          _this2.panTo({
+            lat: latitude,
+            lng: longitude
+          });
 
-        var currentMap = _this2.map.current.state.map;
-        currentMap.setZoom(18);
+          var currentMap = _this2.map.current.state.map;
+          currentMap.setZoom(18);
+        }
       });
     }
   };
